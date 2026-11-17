@@ -765,7 +765,8 @@ public abstract class PdfContentStreamHandler {
         @Override
         public void invoke(List<PdfObject> operands, PdfContentStreamHandler handler, PdfDictionary resources) {
             PdfNumber scale = (PdfNumber) operands.get(0);
-            handler.graphicsState().setHorizontalScaling(scale.floatValue());
+            // The operand is a percentage of the normal width; the graphics state holds a factor.
+            handler.graphicsState().setHorizontalScaling(scale.floatValue() / 100f);
         }
     }
 
