@@ -53,9 +53,10 @@ public class XMLUtil {
      * @return the escaped string
      */
     public static String escapeXML(String s, boolean onlyASCII) {
-        char[] cc = s.toCharArray();
         StringBuilder sb = new StringBuilder();
-        for (int c : cc) {
+        // By code point: a character outside the Basic Multilingual Plane is two chars, neither of which is a
+        // valid XML character on its own.
+        for (int c : s.codePoints().toArray()) {
             switch (c) {
                 case '<':
                     sb.append("&lt;");
@@ -80,7 +81,7 @@ public class XMLUtil {
                         if (onlyASCII && c > 127) {
                             sb.append("&#").append(c).append(';');
                         } else {
-                            sb.append((char) c);
+                            sb.appendCodePoint(c);
                         }
                     }
             }
