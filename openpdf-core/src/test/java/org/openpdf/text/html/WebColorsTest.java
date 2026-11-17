@@ -165,5 +165,32 @@ public class WebColorsTest {
 
     }
 
+    @Test
+    public void testYellowGreen() {
+        Assertions.assertEquals(new Color(0x9a, 0xcd, 0x32), WebColors.getRGBColor("yellowgreen"));
+    }
+
+    @Test
+    public void testEveryNamedColorResolves() {
+        for (String name : WebColors.NAMES.keySet()) {
+            Assertions.assertDoesNotThrow(() -> WebColors.getRGBColor(name), name);
+        }
+    }
+
+    @Test
+    public void testFunctionsIgnoreCaseAndSurroundingSpace() {
+        Color red = new Color(255, 0, 0);
+
+        Assertions.assertEquals(red, WebColors.getRGBColor("RGB(255,0,0)"));
+        Assertions.assertEquals(red, WebColors.getRGBColor(" rgb(255,0,0) "));
+        Assertions.assertEquals(WebColors.getRGBColor("hsl(270, 60%, 70%)"), WebColors.getRGBColor("HSL(270, 60%, 70%)"));
+    }
+
+    @Test
+    public void testHueInGradians() {
+        // 300 gradians are 270 degrees
+        Assertions.assertEquals(WebColors.getRGBColor("hsl(270deg, 60%, 70%)"),
+                WebColors.getRGBColor("hsl(300grad, 60%, 70%)"));
+    }
 
 }

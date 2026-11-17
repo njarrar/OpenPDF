@@ -222,7 +222,7 @@ public class WebColors extends HashMap<String, int[]> {
         NAMES.put("white", new int[]{0xff, 0xff, 0xff, 0xff});
         NAMES.put("whitesmoke", new int[]{0xf5, 0xf5, 0xf5, 0xff});
         NAMES.put("yellow", new int[]{0xff, 0xff, 0x00, 0xff});
-        NAMES.put("yellowgreen", new int[]{0x9, 0xacd, 0x32, 0xff});
+        NAMES.put("yellowgreen", new int[]{0x9a, 0xcd, 0x32, 0xff});
     }
 
     /**
@@ -249,9 +249,9 @@ public class WebColors extends HashMap<String, int[]> {
 
         if (colorName.startsWith("#")) {
             return getRGBFromHex(colorName);
-        } else if (name.startsWith("rgb")) {
+        } else if (colorName.startsWith("rgb")) {
             return getRGBFromRGB(colorName);
-        } else if (name.startsWith("hsl")) {
+        } else if (colorName.startsWith("hsl")) {
             return getRGBFromHSL(colorName);
         } else {
             return getRGBFromName(colorName);
@@ -388,16 +388,17 @@ public class WebColors extends HashMap<String, int[]> {
             double degrees = Double.parseDouble(hueString.substring(0, hueString.length() - 3));
             return degrees % 360;
         }
+        // "grad" before "rad", which it also ends with
+        if (hueString.endsWith("grad")) {
+            double gradians = Double.parseDouble(hueString.substring(0, hueString.length() - 4));
+            double degrees = gradians * 360 / 400;
+            return degrees % 360;
+        }
         if (hueString.endsWith("rad")) {
             double radians = Double.parseDouble(hueString.substring(0, hueString.length() - 3));
             double degrees = Math.toDegrees(radians);
             return degrees % 360;
 
-        }
-        if (hueString.endsWith("grad")) {
-            double gradians = Double.parseDouble(hueString.substring(0, hueString.length() - 4));
-            double degrees = gradians * 360 / 400;
-            return degrees % 360;
         }
         if (hueString.endsWith("turn")) {
             double turns = Double.parseDouble(hueString.substring(0, hueString.length() - 4));
