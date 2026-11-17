@@ -197,7 +197,8 @@ public class BarcodeInter25 extends Barcode {
             }
             String fullCode = code;
             if (generateChecksum && checksumText) {
-                fullCode += getChecksum(fullCode);
+                // of the digits alone, as for the bars: the code may hold other characters
+                fullCode += getChecksum(keepNumbers(fullCode));
             }
             fontX = font.getWidthPoint(altText != null ? altText : fullCode, size);
         }
@@ -255,7 +256,8 @@ public class BarcodeInter25 extends Barcode {
         float fontX = 0;
         if (font != null) {
             if (generateChecksum && checksumText) {
-                fullCode += getChecksum(fullCode);
+                // of the digits alone, as for the bars: the code may hold other characters
+                fullCode += getChecksum(keepNumbers(fullCode));
             }
             fontX = font.getWidthPoint(fullCode = altText != null ? altText : fullCode, size);
         }
