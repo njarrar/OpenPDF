@@ -241,17 +241,12 @@ public class PdfChunk {
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
+                // Only the regular face of the fallback font is bundled, so bold and italic are simulated,
+                // or the style asked for would be lost.
+                simulateStyle(style, size);
             }
         } else {
-            // bold simulation
-            if ((style & Font.BOLD) != 0) {
-                attributes.put(Chunk.TEXTRENDERMODE,
-                        new Object[]{PdfContentByte.TEXT_RENDER_MODE_FILL_STROKE, size / 30f, null});
-            }
-            // italic simulation
-            if ((style & Font.ITALIC) != 0) {
-                attributes.put(Chunk.SKEW, new float[]{0, ITALIC_ANGLE});
-            }
+            simulateStyle(style, size);
         }
         font = new PdfFont(baseFont, size);
         // other style possibilities
@@ -308,6 +303,22 @@ public class PdfChunk {
     }
 
     // methods
+
+    /**
+     * Simulates bold with a stroked outline and italic with a skew, for a font that has no such face of its own.
+     *
+     * @param style the style of the chunk's font
+     * @param size  the size of the chunk's font
+     */
+    private void simulateStyle(int style, float size) {
+        if ((style & Font.BOLD) != 0) {
+            attributes.put(Chunk.TEXTRENDERMODE,
+                    new Object[]{PdfContentByte.TEXT_RENDER_MODE_FILL_STROKE, size / 30f, null});
+        }
+        if ((style & Font.ITALIC) != 0) {
+            attributes.put(Chunk.SKEW, new float[]{0, ITALIC_ANGLE});
+        }
+    }
 
     public static boolean noPrint(int c) {
         return ((c >= 0x200b && c <= 0x200f) || (c >= 0x202a && c <= 0x202e));
