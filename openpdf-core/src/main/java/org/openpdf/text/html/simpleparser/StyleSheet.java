@@ -65,25 +65,29 @@ public class StyleSheet {
     private final Map<String, Map<String, String>> classMap = new HashMap<>();
     private final Map<String, Map<String, String>> tagMap = new HashMap<>();
 
+    /**
+     * Adds the styles loaded for the tag and for the element's class to its properties. A class style overrides a
+     * tag style, and a property the element sets itself overrides both.
+     *
+     * @param tag   the name of the tag
+     * @param props the element's properties, which the styles are added to
+     */
     public void applyStyle(String tag, Map<String, String> props) {
-        Map<String, String> map = tagMap.get(tag.toLowerCase());
-        if (map != null) {
-            Map<String, String> temp = new HashMap<>(map);
-            temp.putAll(props);
-            props.putAll(temp);
+        Map<String, String> styles = new HashMap<>();
+        Map<String, String> tagStyles = tagMap.get(tag.toLowerCase());
+        if (tagStyles != null) {
+            styles.putAll(tagStyles);
         }
         String cm = props.get(Markup.HTML_ATTR_CSS_CLASS);
-        if (cm == null) {
-            return;
+        if (cm != null) {
+            Map<String, String> classStyles = classMap.get(cm.toLowerCase());
+            if (classStyles != null) {
+                props.remove(Markup.HTML_ATTR_CSS_CLASS);
+                styles.putAll(classStyles);
+            }
         }
-        map = classMap.get(cm.toLowerCase());
-        if (map == null) {
-            return;
-        }
-        props.remove(Markup.HTML_ATTR_CSS_CLASS);
-        Map<String, String> temp = new HashMap<>(map);
-        temp.putAll(props);
-        props.putAll(temp);
+        styles.putAll(props);
+        props.putAll(styles);
     }
 
     public void loadStyle(String style, Map<String, String> props) {
